@@ -48,7 +48,7 @@ module.exports = {
       })
       //server response
       .then(user => {
-        if(user) {
+        if(!user) {
           res.status(404).json({message:'Thought created, but no user with given ID found with which to associate thought.'});
         } else {
           res.status(201).json(user);
