@@ -4,6 +4,8 @@ module.exports = {
   //send all users
   getUsers(req, res) {
     User.find()
+      .select('-__v')
+      .populate('thoughts')
       .then(async (users) => {
         return res.status(200).json(users);
       })
@@ -73,9 +75,9 @@ module.exports = {
     )
     .then(user => {
       if(!user) {
-        req.status(404).json({message:'No user found with given ID.'});
+        res.status(404).json({message:'No user found with given ID.'});
       } else {
-        req.status(200).json(user);
+        res.status(200).json(user);
       }
     })
     .catch(err => {

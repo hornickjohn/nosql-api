@@ -5,6 +5,7 @@ module.exports = {
   //send all thoughts
   getThoughts(req, res) {
     Thought.find()
+      .select('-__v')
       .then(async (thoughts) => {
         return res.status(200).json(thoughts);
       })
@@ -39,19 +40,18 @@ module.exports = {
       })
       //add the thought to the user provided via userId
       .then(thought => {
-        const user = User.findOneAndUpdate(
+        return User.findOneAndUpdate(
           { _id: req.body.userId },
           { $addToSet: { thoughts: thought._id } },
           { new: true }
         );
-        return { user, thought };
       })
       //server response
-      .then(obj => {
-        if(!obj.user) {
+      .then(user => {
+        if(user) {
           res.status(404).json({message:'Thought created, but no user with given ID found with which to associate thought.'});
         } else {
-          res.status(201).json(obj.thought);
+          res.status(201).json(user);
         }
       })
       .catch(err => {
@@ -87,9 +87,9 @@ module.exports = {
     )
     .then(thought => {
       if(!thought) {
-        req.status(404).json({message:'No thought found with given ID.'});
+        res.status(404).json({message:'No thought found with given ID.'});
       } else {
-        req.status(200).json(thought);
+        res.status(200).json(thought);
       }
     })
     .catch(err => {
