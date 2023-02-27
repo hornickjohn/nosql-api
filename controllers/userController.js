@@ -6,6 +6,7 @@ module.exports = {
     User.find()
       .select('-__v')
       .populate('thoughts')
+      .populate('friends')
       .then(async (users) => {
         return res.status(200).json(users);
       })
